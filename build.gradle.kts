@@ -3,16 +3,16 @@ import java.util.Properties
 
 val jacksonVersion = "2.13.3"
 val okhttpVersion = "4.10.0"
-val kotlinCoroutinesVersion = "1.6.2"
+val kotlinCoroutinesVersion = "1.6.4"
 
 plugins {
-    kotlin("jvm") version "1.7.0"
+    kotlin("jvm") version "1.7.10"
     signing
     `maven-publish`
 }
 
 group = "me.kuku"
-version = "0.0.6"
+version = "0.0.7"
 
 repositories {
     mavenCentral()
@@ -57,7 +57,7 @@ publishing {
         create<MavenPublication>("maven") {
             artifact(sourcesJar)
             artifact(docJar)
-            artifactId = "utils"
+            artifactId = "utils-jackson"
             pom {
                 name.set("utils")
                 description.set("my utils")
@@ -94,16 +94,21 @@ publishing {
             }
         }
 
-        maven {
-            url = uri("https://s01.oss.sonatype.org/service/local/staging/deploy/maven2/")
-            credentials {
-                username = properties.getProperty("sonatype.username")
-                password = properties.getProperty("sonatype.password")
+        if (properties.getProperty("sonatype.username") != null && properties.getProperty("sonatype.username").isNotEmpty()) {
+            maven {
+                url = uri("https://s01.oss.sonatype.org/service/local/staging/deploy/maven2/")
+                credentials {
+                    username = properties.getProperty("sonatype.username")
+                    password = properties.getProperty("sonatype.password")
+                }
             }
         }
+
     }
 
-    signing {
-        sign(publishing.publications)
+    if (properties.getProperty("signing.keyId") != null && properties.getProperty("signing.keyId").isNotEmpty()) {
+        signing {
+            sign(publishing.publications)
+        }
     }
 }

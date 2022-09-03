@@ -11,6 +11,7 @@ import java.io.File
 import java.io.IOException
 import java.io.InputStream
 import java.nio.file.Path
+import java.util.function.Predicate
 
 object OkHttpKtUtils {
 
@@ -476,4 +477,113 @@ object OkHttpKtUtils {
         val response = post(url, map, headerMap)
         return OkUtils.file(response, file)
     }
+
+    fun websocket(url: String, block: OkHttpWebSocket.() -> Unit) {
+        val okHttpWebSocket = OkHttpWebSocket()
+        block.invoke(okHttpWebSocket)
+        val request = Request.Builder().get().url(url).build()
+        okhttpClient().newWebSocket(request, object: WebSocketListener() {
+            override fun onClosed(webSocket: WebSocket, code: Int, reason: String) {
+                okHttpWebSocket.closedList.forEach {
+                    it.invoke(webSocket, OkHttpWebSocket.Close(code, reason))
+                }
+            }
+
+            override fun onClosing(webSocket: WebSocket, code: Int, reason: String) {
+                okHttpWebSocket.closingList.forEach {
+                    it.invoke(webSocket, OkHttpWebSocket.Close(code, reason))
+                }
+            }
+
+            override fun onFailure(webSocket: WebSocket, t: Throwable, response: Response?) {
+                okHttpWebSocket.failureList.forEach {
+                    it.invoke(webSocket, OkHttpWebSocket.Failure(t, response))
+                }
+            }
+
+            override fun onMessage(webSocket: WebSocket, text: String) {
+                kotlin.runCatching {
+                    val jsonNode = text.toJsonNode()
+                    okHttpWebSocket.jsonMessageList.forEach {
+                        if (it.predicate.test(jsonNode)) {
+                            it.block.invoke(webSocket, jsonNode)
+                        }
+                    }
+                }.onFailure {
+                    okHttpWebSocket.textMessageList.forEach {
+                        if (it.predicate.test(text)) {
+                            it.block.invoke(webSocket, text)
+                        }
+                    }
+                }
+            }
+
+            override fun onMessage(webSocket: WebSocket, bytes: ByteString) {
+                okHttpWebSocket.byteStringMessageList.forEach {
+                    if (it.predicate.test(bytes)) {
+                        it.block.invoke(webSocket, bytes)
+                    }
+                }
+            }
+
+            override fun onOpen(webSocket: WebSocket, response: Response) {
+                okHttpWebSocket.openList.forEach {
+                    it.invoke(webSocket, response)
+                }
+            }
+        })
+    }
+}
+
+class OkHttpWebSocket {
+    data class Close(val code: Int, val reason: String)
+    data class Failure(val t: Throwable, val response: Response?)
+    data class TextMessageAndPredicate(val block: WebSocket.(String) -> Unit, val predicate: Predicate<String>)
+    data class JsonMessageAndPredicate(val block: WebSocket.(JsonNode) -> Unit, val predicate: Predicate<JsonNode>)
+    data class ByteStringMessageAndPredicate(val block: WebSocket.(ByteString) -> Unit, val predicate: Predicate<ByteString>)
+
+    val openList = mutableListOf<WebSocket.(Response) -> Unit>()
+    val closedList = mutableListOf<WebSocket.(Close) -> Unit>()
+    val closingList =  mutableListOf<WebSocket.(Close) -> Unit>()
+    val failureList = mutableListOf<WebSocket.(Failure) -> Unit>()
+    val textMessageList = mutableListOf<TextMessageAndPredicate>()
+    val jsonMessageList = mutableListOf<JsonMessageAndPredicate>()
+    val byteStringMessageList = mutableListOf<ByteStringMessageAndPredicate>()
+
+    fun open(block: WebSocket.(Response) -> Unit): OkHttpWebSocket {
+        openList.add(block)
+        return this
+    }
+
+    fun closed(block: WebSocket.(Close) -> Unit): OkHttpWebSocket {
+        closedList.add(block)
+        return this
+    }
+
+    fun closing(block: WebSocket.(Close) -> Unit): OkHttpWebSocket {
+        closingList.add(block)
+        return this
+    }
+
+    fun failure(block: WebSocket.(Failure) -> Unit): OkHttpWebSocket {
+        failureList.add(block)
+        return this
+    }
+
+    fun textMessage(predicate: Predicate<String> = Predicate<String> { true }, block: WebSocket.(String) -> Unit): OkHttpWebSocket {
+        textMessageList.add(TextMessageAndPredicate(block, predicate))
+        return this
+    }
+
+    fun byteStringMessage(predicate: Predicate<ByteString> = Predicate<ByteString> { true }, block: WebSocket.(ByteString) -> Unit): OkHttpWebSocket {
+        byteStringMessageList.add(ByteStringMessageAndPredicate(block, predicate))
+        return this
+    }
+
+    fun jsonMessage(predicate: Predicate<JsonNode> = Predicate<JsonNode> { true }, block: WebSocket.(JsonNode) -> Unit): OkHttpWebSocket {
+        jsonMessageList.add(JsonMessageAndPredicate(block, predicate))
+        return this
+    }
+
+
 }

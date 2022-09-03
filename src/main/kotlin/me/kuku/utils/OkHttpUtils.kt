@@ -7,12 +7,10 @@ import me.kuku.pojo.UA
 import okhttp3.*
 import okio.ByteString
 import java.io.File
-import java.io.IOException
 import java.io.InputStream
 import java.net.Proxy
 import java.nio.file.Path
 import java.util.concurrent.TimeUnit
-import java.util.function.Consumer
 import javax.net.ssl.SSLContext
 import javax.net.ssl.X509TrustManager
 
@@ -22,7 +20,12 @@ object OkHttpUtils {
     var timeOut = 30L
 
     @JvmStatic
-    var okhttpClient: OkHttpClient? = null
+    private var okhttpClient: OkHttpClient? = null
+
+    @JvmStatic
+    fun setOkhttpClient(client: OkHttpClient) {
+        okhttpClient = client
+    }
 
     @JvmStatic
     var proxy: Proxy? = null
@@ -88,32 +91,6 @@ object OkHttpUtils {
         return x(request)
     }
 
-    private fun callResponse(request: Request): CallResponse {
-        val callResponse = CallResponse()
-        okhttpClient().newCall(request).enqueue(object: Callback {
-            override fun onFailure(call: Call, e: IOException) {
-                callResponse.runFailure(e)
-            }
-
-            override fun onResponse(call: Call, response: Response) {
-                callResponse.runResponse(response)
-            }
-        })
-        return callResponse
-    }
-
-    @JvmStatic
-    @JvmOverloads
-    fun getAsync(url: String, headers: Headers = defaultHeaders()): CallResponse {
-        val request = Request.Builder().url(url).headers(headers).build()
-        return callResponse(request)
-    }
-
-    @JvmStatic
-    fun getAsync(url: String, map: Map<String, String>): CallResponse {
-        return getAsync(url, addHeaders(map))
-    }
-
     @JvmStatic
     fun get(url: String, map: Map<String, String>): Response {
         return get(url, addHeaders(map))
@@ -150,29 +127,6 @@ object OkHttpUtils {
 
     @JvmStatic
     @JvmOverloads
-    fun postAsync(url: String, requestBody: RequestBody = FormBody.Builder().build(), headers: Headers = defaultHeaders()): CallResponse {
-        val request = Request.Builder().url(url).post(requestBody).headers(headers).build()
-        return callResponse(request)
-    }
-
-    @JvmStatic
-    fun postAsync(url: String, requestBody: RequestBody = FormBody.Builder().build(), headersMap: Map<String, String>): CallResponse {
-        return postAsync(url, requestBody, addHeaders(headersMap))
-    }
-
-    @JvmStatic
-    @JvmOverloads
-    fun postAsync(url: String, map: Map<String, String>, headers: Headers = defaultHeaders()): CallResponse {
-        return postAsync(url, mapToFormBody(map), headers)
-    }
-
-    @JvmStatic
-    fun postAsync(url: String, map: Map<String, String>, headerMap: Map<String, String>): CallResponse {
-        return postAsync(url, map, addHeaders(headerMap))
-    }
-
-    @JvmStatic
-    @JvmOverloads
     fun put(url: String, requestBody: RequestBody = FormBody.Builder().build(), headers: Headers = defaultHeaders()): Response {
         val request = Request.Builder().url(url).put(requestBody).headers(headers).build()
         return x(request)
@@ -192,29 +146,6 @@ object OkHttpUtils {
     @JvmStatic
     fun put(url: String, map: Map<String, String>, headerMap: Map<String, String>): Response {
         return put(url, map, addHeaders(headerMap))
-    }
-
-    @JvmStatic
-    @JvmOverloads
-    fun putAsync(url: String, requestBody: RequestBody = FormBody.Builder().build(), headers: Headers = defaultHeaders()): CallResponse {
-        val request = Request.Builder().url(url).put(requestBody).headers(headers).build()
-        return callResponse(request)
-    }
-
-    @JvmStatic
-    fun putAsync(url: String, requestBody: RequestBody = FormBody.Builder().build(), headersMap: Map<String, String>): CallResponse {
-        return putAsync(url, requestBody, addHeaders(headersMap))
-    }
-
-    @JvmStatic
-    @JvmOverloads
-    fun putAsync(url: String, map: Map<String, String>, headers: Headers = defaultHeaders()): CallResponse {
-        return putAsync(url, mapToFormBody(map), headers)
-    }
-
-    @JvmStatic
-    fun putAsync(url: String, map: Map<String, String>, headerMap: Map<String, String>): CallResponse {
-        return putAsync(url, map, addHeaders(headerMap))
     }
 
     @JvmStatic
@@ -242,29 +173,6 @@ object OkHttpUtils {
 
     @JvmStatic
     @JvmOverloads
-    fun deleteAsync(url: String, requestBody: RequestBody = FormBody.Builder().build(), headers: Headers = defaultHeaders()): CallResponse {
-        val request = Request.Builder().url(url).delete(requestBody).headers(headers).build()
-        return callResponse(request)
-    }
-
-    @JvmStatic
-    fun deleteAsync(url: String, requestBody: RequestBody = FormBody.Builder().build(), headersMap: Map<String, String>): CallResponse {
-        return deleteAsync(url, requestBody, addHeaders(headersMap))
-    }
-
-    @JvmStatic
-    @JvmOverloads
-    fun deleteAsync(url: String, map: Map<String, String>, headers: Headers = defaultHeaders()): CallResponse {
-        return deleteAsync(url, mapToFormBody(map), headers)
-    }
-
-    @JvmStatic
-    fun deleteAsync(url: String, map: Map<String, String>, headerMap: Map<String, String>): CallResponse {
-        return deleteAsync(url, map, addHeaders(headerMap))
-    }
-
-    @JvmStatic
-    @JvmOverloads
     fun patch(url: String, requestBody: RequestBody = FormBody.Builder().build(), headers: Headers = defaultHeaders()): Response {
         val request = Request.Builder().url(url).patch(requestBody).headers(headers).build()
         return x(request)
@@ -284,29 +192,6 @@ object OkHttpUtils {
     @JvmStatic
     fun patch(url: String, map: Map<String, String>, headerMap: Map<String, String>): Response {
         return patch(url, map, addHeaders(headerMap))
-    }
-
-    @JvmStatic
-    @JvmOverloads
-    fun patchAsync(url: String, requestBody: RequestBody = FormBody.Builder().build(), headers: Headers = defaultHeaders()): CallResponse {
-        val request = Request.Builder().url(url).patch(requestBody).headers(headers).build()
-        return callResponse(request)
-    }
-
-    @JvmStatic
-    fun patchAsync(url: String, requestBody: RequestBody = FormBody.Builder().build(), headersMap: Map<String, String>): CallResponse {
-        return patchAsync(url, requestBody, addHeaders(headersMap))
-    }
-
-    @JvmStatic
-    @JvmOverloads
-    fun patchAsync(url: String, map: Map<String, String>, headers: Headers = defaultHeaders()): CallResponse {
-        return patchAsync(url, mapToFormBody(map), headers)
-    }
-
-    @JvmStatic
-    fun patchAsync(url: String, map: Map<String, String>, headerMap: Map<String, String>): CallResponse {
-        return patchAsync(url, map, addHeaders(headerMap))
     }
 
     // ---------------------------------------------------------------------------------------------------
@@ -728,43 +613,4 @@ object OkHttpUtils {
         val response = post(url, map, headerMap)
         return OkUtils.file(response, file)
     }
-}
-
-class CallResponse {
-
-    private var responseBlock: (OkHttpUtils.(Response) -> Unit)? = null
-    private var failureBlock: (OkHttpUtils.(IOException) -> Unit)? = null
-    private var responseConsumer: Consumer<Response>? = null
-    private var failureConsumer: Consumer<IOException>? = null
-
-    fun onResponse(block: OkHttpUtils.(Response) -> Unit): CallResponse {
-        this.responseBlock = block
-        return this
-    }
-
-    fun onResponse(consumer: Consumer<Response>): CallResponse {
-        this.responseConsumer = consumer
-        return this
-    }
-
-    fun onFailure(block: OkHttpUtils.(IOException) -> Unit): CallResponse {
-        this.failureBlock = block
-        return this
-    }
-
-    fun onFailure(consumer: Consumer<IOException>): CallResponse {
-        this.failureConsumer = consumer
-        return this
-    }
-
-    fun runResponse(response: Response) {
-        responseBlock?.invoke(OkHttpUtils, response)
-        responseConsumer?.accept(response)
-    }
-
-    fun runFailure(e: IOException) {
-        failureBlock?.invoke(OkHttpUtils, e)
-        failureConsumer?.accept(e)
-    }
-
 }

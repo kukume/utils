@@ -121,7 +121,7 @@ object OkUtils {
 
     @JvmStatic
     @JvmOverloads
-    fun headers(cookie: String, referer: String = "", userAgent: String = ""): Headers {
+    fun headers(cookie: String = "", referer: String = "", userAgent: String = UA.PC.value): Headers {
         return Headers.headersOf("cookie", cookie, "referer", referer, "user-agent", userAgent)
     }
 
