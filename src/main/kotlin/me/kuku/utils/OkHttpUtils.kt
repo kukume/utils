@@ -613,4 +613,10 @@ object OkHttpUtils {
         val response = post(url, map, headerMap)
         return OkUtils.file(response, file)
     }
+
+    @JvmStatic
+    fun websocket(url: String, listener: WebSocketListener) {
+        val request = Request.Builder().get().url(url).build()
+        okhttpClient().newWebSocket(request, listener)
+    }
 }
