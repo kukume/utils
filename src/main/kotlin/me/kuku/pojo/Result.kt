@@ -72,7 +72,9 @@ class CommonResultSerializer: JsonSerializer<CommonResult<*>>() {
                 gen.writeStartObject()
                 gen.writeNumberField("code", it.code)
                 gen.writeStringField("message", it.message)
-                gen.writeObjectField("data", it.data)
+                it.data?.let { data ->
+                    gen.writeObjectField("data", data)
+                }
                 gen.writeEndObject()
             }
         } ?: gen.writeObject("{}")
