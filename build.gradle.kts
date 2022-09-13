@@ -1,7 +1,7 @@
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 import java.util.Properties
 
-val jacksonVersion = "2.13.3"
+val jacksonVersion = "2.13.4"
 val okhttpVersion = "4.10.0"
 val kotlinCoroutinesVersion = "1.6.4"
 
