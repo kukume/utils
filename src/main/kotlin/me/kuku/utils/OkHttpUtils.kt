@@ -11,8 +11,6 @@ import java.io.InputStream
 import java.net.Proxy
 import java.nio.file.Path
 import java.util.concurrent.TimeUnit
-import javax.net.ssl.SSLContext
-import javax.net.ssl.X509TrustManager
 
 object OkHttpUtils {
 
@@ -33,27 +31,6 @@ object OkHttpUtils {
     @Synchronized
     fun okhttpClient(): OkHttpClient {
         if (okhttpClient == null) {
-            val trustAllCert = object : X509TrustManager {
-                override fun getAcceptedIssuers(): Array<java.security.cert.X509Certificate> {
-                    return arrayOf()
-                }
-
-                override fun checkClientTrusted(
-                    certs: Array<java.security.cert.X509Certificate>,
-                    authType: String
-                ) {
-                }
-
-                override fun checkServerTrusted(
-                    certs: Array<java.security.cert.X509Certificate>,
-                    authType: String
-                ) {
-                }
-            }
-            val trustAllCerts = arrayOf(trustAllCert)
-            val sslContext = SSLContext.getInstance("SSL")
-            sslContext.init(null, trustAllCerts, java.security.SecureRandom())
-            val sslSocketFactory = sslContext.socketFactory
             val builder = OkHttpClient.Builder()
                 .followRedirects(false)
                 .followSslRedirects(false)

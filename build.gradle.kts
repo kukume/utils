@@ -2,17 +2,17 @@ import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 import java.util.Properties
 
 val jacksonVersion = "2.13.4"
-val okhttpVersion = "4.10.0"
 val kotlinCoroutinesVersion = "1.6.4"
+val ktorVersion = "2.1.2"
 
 plugins {
-    kotlin("jvm") version "1.7.10"
+    kotlin("jvm") version "1.7.20"
     signing
     `maven-publish`
 }
 
 group = "me.kuku"
-version = "0.0.7"
+version = "1.0.0"
 
 repositories {
     mavenCentral()
@@ -20,11 +20,11 @@ repositories {
 
 dependencies {
     api(kotlin("stdlib"))
-    api("org.jetbrains.kotlinx:kotlinx-coroutines-core:$kotlinCoroutinesVersion")
-    api("com.squareup.okhttp3:okhttp:$okhttpVersion")
-    api("com.fasterxml.jackson.core:jackson-databind:$jacksonVersion")
     api("com.fasterxml.jackson.datatype:jackson-datatype-jsr310:$jacksonVersion")
-    api("com.fasterxml.jackson.module:jackson-module-kotlin:$jacksonVersion")
+    implementation("io.ktor:ktor-client-core:$ktorVersion")
+    implementation("io.ktor:ktor-client-okhttp:$ktorVersion")
+    implementation("io.ktor:ktor-client-content-negotiation:$ktorVersion")
+    implementation("io.ktor:ktor-serialization-jackson:$ktorVersion")
     compileOnly("com.alibaba:fastjson:1.2.83")
     testImplementation(kotlin("test"))
 }
@@ -57,7 +57,7 @@ publishing {
         create<MavenPublication>("maven") {
             artifact(sourcesJar)
             artifact(docJar)
-            artifactId = "utils-jackson"
+            artifactId = "utils"
             pom {
                 name.set("utils")
                 description.set("my utils")
