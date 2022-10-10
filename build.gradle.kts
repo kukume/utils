@@ -1,8 +1,7 @@
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 import java.util.Properties
 
-val jacksonVersion = "2.13.4"
-val kotlinCoroutinesVersion = "1.6.4"
+val jacksonVersion = "2.14.0-rc1"
 val ktorVersion = "2.1.2"
 
 plugins {
@@ -12,7 +11,7 @@ plugins {
 }
 
 group = "me.kuku"
-version = "1.0.0"
+version = "1.2"
 
 repositories {
     mavenCentral()
@@ -21,10 +20,10 @@ repositories {
 dependencies {
     api(kotlin("stdlib"))
     api("com.fasterxml.jackson.datatype:jackson-datatype-jsr310:$jacksonVersion")
-    implementation("io.ktor:ktor-client-core:$ktorVersion")
-    implementation("io.ktor:ktor-client-okhttp:$ktorVersion")
-    implementation("io.ktor:ktor-client-content-negotiation:$ktorVersion")
-    implementation("io.ktor:ktor-serialization-jackson:$ktorVersion")
+    api("io.ktor:ktor-client-core:$ktorVersion")
+    api("io.ktor:ktor-client-okhttp:$ktorVersion")
+    api("io.ktor:ktor-client-content-negotiation:$ktorVersion")
+    api("io.ktor:ktor-serialization-jackson:$ktorVersion")
     compileOnly("com.alibaba:fastjson:1.2.83")
     testImplementation(kotlin("test"))
 }
