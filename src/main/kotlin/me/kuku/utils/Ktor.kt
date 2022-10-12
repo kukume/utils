@@ -1,5 +1,12 @@
 package me.kuku.utils
 
+import com.fasterxml.jackson.annotation.JsonInclude
+import com.fasterxml.jackson.core.JsonParser
+import com.fasterxml.jackson.databind.DeserializationFeature
+import com.fasterxml.jackson.databind.ObjectMapper
+import com.fasterxml.jackson.databind.SerializationFeature
+import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule
+import com.fasterxml.jackson.module.kotlin.kotlinModule
 import io.ktor.client.*
 import io.ktor.client.engine.okhttp.*
 import io.ktor.client.plugins.contentnegotiation.*
@@ -38,6 +45,16 @@ fun setKtorProxy(proxyParam: Proxy) {
     ktorProxy = proxyParam
 }
 
+private fun ObjectMapper.config() {
+    setSerializationInclusion(JsonInclude.Include.NON_NULL)
+    disable(SerializationFeature.FAIL_ON_EMPTY_BEANS)
+    configure(JsonParser.Feature.ALLOW_UNQUOTED_FIELD_NAMES, true)
+    configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false)
+    configure(JsonParser.Feature.ALLOW_SINGLE_QUOTES, true)
+    registerModule(JavaTimeModule())
+    registerModule(kotlinModule())
+}
+
 val client by lazy {
     HttpClient(OkHttp) {
         engine {
@@ -55,7 +72,9 @@ val client by lazy {
         }
 
         install(ContentNegotiation) {
-            jackson()
+            jackson {
+                config()
+            }
         }
     }
 }
