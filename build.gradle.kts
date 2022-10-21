@@ -1,7 +1,7 @@
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 import java.util.Properties
 
-val jacksonVersion = "2.14.0-rc1"
+val jacksonVersion = "2.14.0-rc2"
 val ktorVersion = "2.1.2"
 
 plugins {
@@ -11,7 +11,7 @@ plugins {
 }
 
 group = "me.kuku"
-version = "1.5"
+version = "1.6"
 
 repositories {
     mavenCentral()
@@ -24,6 +24,7 @@ dependencies {
     api("io.ktor:ktor-client-okhttp:$ktorVersion")
     api("io.ktor:ktor-client-content-negotiation:$ktorVersion")
     api("io.ktor:ktor-serialization-jackson:$ktorVersion")
+    api("io.ktor:ktor-client-websockets:$ktorVersion")
     compileOnly("com.alibaba:fastjson:1.2.83")
     testImplementation(kotlin("test"))
 }

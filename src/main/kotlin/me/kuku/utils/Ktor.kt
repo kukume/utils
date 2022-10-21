@@ -10,6 +10,7 @@ import com.fasterxml.jackson.module.kotlin.kotlinModule
 import io.ktor.client.*
 import io.ktor.client.engine.okhttp.*
 import io.ktor.client.plugins.contentnegotiation.*
+import io.ktor.client.plugins.websocket.*
 import io.ktor.client.request.forms.*
 import io.ktor.http.*
 import io.ktor.serialization.jackson.*
@@ -75,6 +76,10 @@ val client by lazy {
             jackson {
                 config()
             }
+        }
+
+        install(WebSockets) {
+            contentConverter = JacksonWebsocketContentConverter(Jackson.objectMapper)
         }
     }
 }
