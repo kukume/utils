@@ -22,7 +22,7 @@ object JobManager {
         }
     }
 
-    fun now(block: suspend () -> Unit): Job {
+    fun now(block: suspend CoroutineScope.() -> Unit): Job {
         return coroutineScope.launch {
             kotlin.runCatching {
                 block()
@@ -44,7 +44,7 @@ object JobManager {
         }
     }
 
-    fun delay(wait: Long, block: suspend () -> Unit): Job {
+    fun delay(wait: Long, block: suspend CoroutineScope.() -> Unit): Job {
         return coroutineScope.launch {
             kotlinx.coroutines.delay(wait)
             kotlin.runCatching {
@@ -70,7 +70,7 @@ object JobManager {
         }
     }
 
-    fun every(wait: Long = 0, block: suspend () -> Unit): Job {
+    fun every(wait: Long = 0, block: suspend CoroutineScope.() -> Unit): Job {
         return coroutineScope.launch {
             while (true) {
                 kotlinx.coroutines.delay(wait)
@@ -103,7 +103,7 @@ object JobManager {
     }
 
     // 2022-03-02 11:33:22   || 11:33:22
-    fun atTime(atTime: String, always: Boolean = false, block: suspend () -> Unit): Job {
+    fun atTime(atTime: String, always: Boolean = false, block: suspend CoroutineScope.() -> Unit): Job {
         val firstDelay = firstDelay(atTime)
         return coroutineScope.launch {
             if (always) {
