@@ -11,7 +11,9 @@ import io.ktor.client.*
 import io.ktor.client.engine.okhttp.*
 import io.ktor.client.plugins.contentnegotiation.*
 import io.ktor.client.plugins.websocket.*
+import io.ktor.client.request.*
 import io.ktor.client.request.forms.*
+import io.ktor.client.statement.*
 import io.ktor.http.*
 import io.ktor.serialization.jackson.*
 import java.net.Proxy
@@ -89,4 +91,28 @@ fun FormBuilder.append(key: String, byteArray: ByteArray, filename: String, cont
         append(HttpHeaders.ContentType, contentType)
         append(HttpHeaders.ContentDisposition, "filename=\"$filename\"")
     })
+}
+
+fun HttpResponse.cookie(): String {
+    val cookies = this.setCookie()
+    val sb = StringBuilder()
+    for (cookie in cookies) {
+        sb.append("${cookie.name}=${cookie.value}; ")
+    }
+    return sb.toString()
+}
+
+fun HttpMessageBuilder.origin(content: String): Unit = headers.set(HttpHeaders.Origin, content)
+
+fun HttpMessageBuilder.referer(content: String): Unit = headers.set(HttpHeaders.Referrer, content)
+
+fun HttpMessageBuilder.cookieString(content: String): Unit = headers.set(HttpHeaders.Cookie, content)
+
+fun HttpRequestBuilder.setJsonBody(content: Any) {
+    contentType(ContentType.Application.Json)
+    setBody(content)
+}
+
+fun HttpRequestBuilder.setFormDataContent(builder: ParametersBuilder.() -> Unit) {
+    setBody(FormDataContent(Parameters.build { builder() }))
 }

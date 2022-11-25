@@ -147,10 +147,8 @@ object OkUtils {
 
     // -------------------------------------------------------------------------------------------------------------
 
-    @JvmStatic
-    fun cookie(response: Response): String {
+    private fun cookie(cookies: List<String>): String {
         val sb = StringBuilder()
-        val cookies = response.headers("Set-Cookie")
         for (tempCookie in cookies) {
             if (tempCookie.contains("deleted")) continue
             val cookie = MyUtils.regex(".*?;", tempCookie) ?: continue
@@ -160,6 +158,12 @@ object OkUtils {
             sb.append(cookie).append(" ")
         }
         return sb.toString()
+    }
+
+    @JvmStatic
+    fun cookie(response: Response): String {
+        val cookies = response.headers("Set-Cookie")
+        return cookie(cookies)
     }
 
     @JvmStatic
