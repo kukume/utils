@@ -1,17 +1,17 @@
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 import java.util.Properties
 
-val jacksonVersion = "2.14.0"
-val ktorVersion = "2.1.3"
+val jacksonVersion = "2.14.1"
+val ktorVersion = "2.2.1"
 
 plugins {
-    kotlin("jvm") version "1.7.21"
+    kotlin("jvm") version "1.7.22"
     signing
     `maven-publish`
 }
 
 group = "me.kuku"
-version = "1.7"
+version = "2.2.1.0"
 
 repositories {
     mavenCentral()

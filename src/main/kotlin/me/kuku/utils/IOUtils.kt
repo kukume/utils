@@ -11,7 +11,8 @@ object IOUtils {
     private const val tmp = "tmp"
 
     @JvmStatic
-    fun writeTmpFile(fileName: String, `is`: InputStream, isClose: Boolean): File {
+    @JvmOverloads
+    fun writeTmpFile(fileName: String, `is`: InputStream, isClose: Boolean = true): File {
         if (!tmpLocation.exists()) tmpLocation.mkdir()
         val path = tmp + File.separator + fileName
         val fos: FileOutputStream?
@@ -22,11 +23,6 @@ object IOUtils {
             e.printStackTrace()
         }
         return File(path)
-    }
-
-    @JvmStatic
-    fun writeTmpFile(fileName: String, `is`: InputStream): File {
-        return writeTmpFile(fileName, `is`, true)
     }
 
     @JvmStatic

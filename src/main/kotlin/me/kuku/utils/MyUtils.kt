@@ -2,7 +2,6 @@
 
 package me.kuku.utils
 
-import me.kuku.pojo.MissingRegexResultException
 import java.io.File
 import java.io.IOException
 import java.net.JarURLConnection
@@ -28,7 +27,7 @@ object MyUtils {
 
     @JvmStatic
     fun regexOrFail(regex: String, text: String): String {
-        return regex(regex, text) ?: throw MissingRegexResultException()
+        return regex(regex, text) ?: error("regex result not found")
     }
 
     @JvmStatic
@@ -101,6 +100,11 @@ object MyUtils {
     @JvmStatic
     fun randomLetterUpperNum(length: Int): String {
         return random("1234567890ABCDEFGHIJKLMNOPQRSTUVWXYZ", length)
+    }
+
+    @JvmStatic
+    fun randomLetterNum(length: Int): String {
+        return random("1234567890ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz", length)
     }
 
     @JvmStatic
