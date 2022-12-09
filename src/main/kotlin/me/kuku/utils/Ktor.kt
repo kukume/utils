@@ -9,6 +9,7 @@ import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule
 import com.fasterxml.jackson.module.kotlin.kotlinModule
 import io.ktor.client.*
 import io.ktor.client.engine.okhttp.*
+import io.ktor.client.plugins.*
 import io.ktor.client.plugins.contentnegotiation.*
 import io.ktor.client.plugins.websocket.*
 import io.ktor.client.request.*
@@ -74,6 +75,8 @@ val client by lazy {
             }
         }
 
+        followRedirects = false
+
         install(ContentNegotiation) {
             jackson {
                 config()
@@ -82,6 +85,10 @@ val client by lazy {
 
         install(WebSockets) {
             contentConverter = JacksonWebsocketContentConverter(Jackson.objectMapper)
+        }
+
+        defaultRequest {
+            header("Accept", "*/*")
         }
     }
 }
