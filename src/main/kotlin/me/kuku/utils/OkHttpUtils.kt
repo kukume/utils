@@ -15,7 +15,7 @@ import java.util.concurrent.TimeUnit
 object OkHttpUtils {
 
     @JvmStatic
-    var timeOut = 30L
+    var timeOut = 60L
 
     @JvmStatic
     private var okhttpClient: OkHttpClient? = null

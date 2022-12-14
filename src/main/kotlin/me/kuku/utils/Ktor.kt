@@ -65,8 +65,8 @@ val client by lazy {
             config {
                 followRedirects(false)
                 followSslRedirects(false)
-                connectTimeout(30, TimeUnit.SECONDS)
-                readTimeout(30, TimeUnit.SECONDS)
+                connectTimeout(60, TimeUnit.SECONDS)
+                readTimeout(60, TimeUnit.SECONDS)
                 sslSocketFactory(sslSocketFactory, trustAllCerts[0])
                 hostnameVerifier { _, _ -> true }
                 if (ktorProxy != null) {
