@@ -18,29 +18,39 @@ import io.ktor.client.statement.*
 import io.ktor.http.*
 import io.ktor.serialization.jackson.*
 import java.net.Proxy
+import java.net.Socket
+import java.security.cert.X509Certificate
 import java.util.concurrent.TimeUnit
 import javax.net.ssl.SSLContext
-import javax.net.ssl.X509TrustManager
+import javax.net.ssl.SSLEngine
+import javax.net.ssl.X509ExtendedTrustManager
 
-internal val trustAllCert = object : X509TrustManager {
-    override fun getAcceptedIssuers(): Array<java.security.cert.X509Certificate> {
+internal val trustAllCert = object : X509ExtendedTrustManager() {
+    override fun checkClientTrusted(chain: Array<out X509Certificate>?, authType: String?, socket: Socket?) {
+    }
+
+    override fun checkClientTrusted(chain: Array<out X509Certificate>?, authType: String?, engine: SSLEngine?) {
+    }
+
+    override fun checkClientTrusted(chain: Array<out X509Certificate>?, authType: String?) {
+    }
+
+    override fun checkServerTrusted(chain: Array<out X509Certificate>?, authType: String?, socket: Socket?) {
+    }
+
+    override fun checkServerTrusted(chain: Array<out X509Certificate>?, authType: String?, engine: SSLEngine?) {
+    }
+
+    override fun checkServerTrusted(chain: Array<out X509Certificate>?, authType: String?) {
+    }
+
+    override fun getAcceptedIssuers(): Array<X509Certificate> {
         return arrayOf()
-    }
-
-    override fun checkClientTrusted(
-        certs: Array<java.security.cert.X509Certificate>,
-        authType: String
-    ) {
-    }
-
-    override fun checkServerTrusted(
-        certs: Array<java.security.cert.X509Certificate>,
-        authType: String
-    ) {
     }
 }
 internal val trustAllCerts = arrayOf(trustAllCert)
-internal val sslContext = SSLContext.getInstance("SSL").also { it.init(null, trustAllCerts, java.security.SecureRandom()) }
+internal val sslContext =
+    SSLContext.getInstance("SSL").also { it.init(null, trustAllCerts, java.security.SecureRandom()) }
 internal val sslSocketFactory = sslContext.socketFactory
 
 private var ktorProxy: Proxy? = null
@@ -93,7 +103,12 @@ val client by lazy {
     }
 }
 
-fun FormBuilder.append(key: String, byteArray: ByteArray, filename: String, contentType: String = "application/octet-stream") {
+fun FormBuilder.append(
+    key: String,
+    byteArray: ByteArray,
+    filename: String,
+    contentType: String = "application/octet-stream"
+) {
     this.append(key, byteArray, Headers.build {
         append(HttpHeaders.ContentType, contentType)
         append(HttpHeaders.ContentDisposition, "filename=\"$filename\"")
