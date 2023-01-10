@@ -119,6 +119,7 @@ fun HttpResponse.cookie(): String {
     val cookies = this.setCookie()
     val sb = StringBuilder()
     for (cookie in cookies) {
+        if (cookie.value == "deleted") continue
         sb.append("${cookie.name}=${cookie.value}; ")
     }
     return sb.toString()
@@ -137,10 +138,4 @@ fun HttpRequestBuilder.setJsonBody(content: Any) {
 
 fun HttpRequestBuilder.setFormDataContent(builder: ParametersBuilder.() -> Unit) {
     setBody(FormDataContent(Parameters.build { builder() }))
-}
-
-fun ParametersBuilder.append(map: Map<String, String>) {
-    map.forEach { (k, v) ->
-        this.append(k, v)
-    }
 }

@@ -150,7 +150,7 @@ object OkUtils {
     private fun cookie(cookies: List<String>): String {
         val sb = StringBuilder()
         for (tempCookie in cookies) {
-            if (tempCookie.contains("deleted")) continue
+            if (tempCookie == "deleted") continue
             val cookie = MyUtils.regex(".*?;", tempCookie) ?: continue
             val arr = cookie.split("=")
             if (arr.size < 2) continue
