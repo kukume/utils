@@ -2,10 +2,8 @@
 
 package me.kuku.utils
 
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.Job
-import kotlinx.coroutines.launch
+import kotlinx.coroutines.*
+import java.lang.Runnable
 
 object JobManager {
 
@@ -32,10 +30,18 @@ object JobManager {
         }
     }
 
+    suspend fun <T> await(delay: Long = 0, block: suspend CoroutineScope.() -> T): T {
+        val ss = coroutineScope.async {
+            delay(delay)
+            block()
+        }
+        return ss.await()
+    }
+
     @JvmStatic
     fun delay(wait: Long, runnable: Runnable): Job {
         return coroutineScope.launch {
-            kotlinx.coroutines.delay(wait)
+            delay(wait)
             try {
                 runnable.run()
             } catch (e: Exception) {
@@ -46,7 +52,7 @@ object JobManager {
 
     fun delay(wait: Long, block: suspend CoroutineScope.() -> Unit): Job {
         return coroutineScope.launch {
-            kotlinx.coroutines.delay(wait)
+            delay(wait)
             kotlin.runCatching {
                 block()
             }.onFailure {
@@ -60,7 +66,7 @@ object JobManager {
     fun every(wait: Long = 0, runnable: Runnable): Job {
         return coroutineScope.launch {
             while (true) {
-                kotlinx.coroutines.delay(wait)
+                delay(wait)
                 try {
                     runnable.run()
                 } catch (e: Exception) {
@@ -73,7 +79,7 @@ object JobManager {
     fun every(wait: Long = 0, block: suspend CoroutineScope.() -> Unit): Job {
         return coroutineScope.launch {
             while (true) {
-                kotlinx.coroutines.delay(wait)
+                delay(wait)
                 kotlin.runCatching {
                     block()
                 }.onFailure {
@@ -107,17 +113,17 @@ object JobManager {
         val firstDelay = firstDelay(atTime)
         return coroutineScope.launch {
             if (always) {
-                kotlinx.coroutines.delay(firstDelay)
+                delay(firstDelay)
                 while (true) {
                     kotlin.runCatching {
                         block()
                     }.onFailure {
                         it.printStackTrace()
                     }
-                    kotlinx.coroutines.delay(1000 * 60 * 60 * 24)
+                    delay(1000 * 60 * 60 * 24)
                 }
             } else {
-                kotlinx.coroutines.delay(firstDelay)
+                delay(firstDelay)
                 kotlin.runCatching {
                     block()
                 }.onFailure {
@@ -133,17 +139,17 @@ object JobManager {
         val firstDelay = firstDelay(atTime)
         return coroutineScope.launch {
             if (always) {
-                kotlinx.coroutines.delay(firstDelay)
+                delay(firstDelay)
                 while (true) {
                     kotlin.runCatching {
                         runnable.run()
                     }.onFailure {
                         it.printStackTrace()
                     }
-                    kotlinx.coroutines.delay(1000 * 60 * 60 * 24)
+                    delay(1000 * 60 * 60 * 24)
                 }
             } else {
-                kotlinx.coroutines.delay(firstDelay)
+                delay(firstDelay)
                 kotlin.runCatching {
                     runnable.run()
                 }.onFailure {

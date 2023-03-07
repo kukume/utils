@@ -79,6 +79,7 @@ val client by lazy {
                 readTimeout(60, TimeUnit.SECONDS)
                 sslSocketFactory(sslSocketFactory, trustAllCerts[0])
                 hostnameVerifier { _, _ -> true }
+                pingInterval(20, TimeUnit.SECONDS)
                 if (ktorProxy != null) {
                     proxy(ktorProxy)
                 }

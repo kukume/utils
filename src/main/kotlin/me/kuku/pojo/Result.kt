@@ -44,17 +44,6 @@ class CommonResult<T> private constructor(
         @JvmStatic
         fun <T> fail(message: String, data: T? = null, code: Int = 500) = failure(message, data, code)
 
-        @JvmOverloads
-        @JvmStatic
-        fun <T> failure(resultStatus: ResultStatus, data: T? = null): CommonResult<T> {
-            return CommonResult(resultStatus.code, resultStatus.message, data)
-        }
-
-        @JvmOverloads
-        @JvmStatic
-        fun <T> fail(resultStatus: ResultStatus, data: T? = null) = failure(resultStatus, data)
-
-
     }
 }
 private fun Any.valid(): Boolean {

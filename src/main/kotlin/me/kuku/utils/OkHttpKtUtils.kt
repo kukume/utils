@@ -478,11 +478,11 @@ object OkHttpKtUtils {
         return OkUtils.file(response, file)
     }
 
-    fun websocket(url: String, block: OkHttpWebSocket.() -> Unit) {
+    fun websocket(url: String, block: OkHttpWebSocket.() -> Unit): WebSocket {
         val okHttpWebSocket = OkHttpWebSocket()
         block.invoke(okHttpWebSocket)
         val request = Request.Builder().get().url(url).build()
-        okhttpClient().newWebSocket(request, object: WebSocketListener() {
+        return okhttpClient().newWebSocket(request, object : WebSocketListener() {
             override fun onClosed(webSocket: WebSocket, code: Int, reason: String) {
                 okHttpWebSocket.closedList.forEach {
                     it.invoke(webSocket, OkHttpWebSocket.Close(code, reason))
