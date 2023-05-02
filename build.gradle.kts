@@ -1,24 +1,23 @@
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 import java.util.Properties
 
-val jacksonVersion = "2.14.2"
-val ktorVersion = "2.2.4"
+val jacksonVersion = "2.15.0"
+val ktorVersion = "2.3.0"
 
 plugins {
-    kotlin("jvm") version "1.8.10"
+    kotlin("jvm") version "1.8.20"
     signing
     `maven-publish`
 }
 
 group = "me.kuku"
-version = "2.2.4.0"
+version = "2.3.0.0"
 
 repositories {
     mavenCentral()
 }
 
 dependencies {
-    api(kotlin("stdlib"))
     api("com.fasterxml.jackson.datatype:jackson-datatype-jsr310:$jacksonVersion")
     api("io.ktor:ktor-client-core:$ktorVersion")
     api("io.ktor:ktor-client-okhttp:$ktorVersion")
