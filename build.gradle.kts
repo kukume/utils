@@ -2,7 +2,7 @@ import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 import java.util.Properties
 
 val jacksonVersion = "2.15.2"
-val ktorVersion = "2.3.3"
+val ktorVersion = "2.3.4"
 
 plugins {
     kotlin("jvm") version "1.9.10"
@@ -11,7 +11,7 @@ plugins {
 }
 
 group = "me.kuku"
-version = "2.3.3.0"
+version = "2.3.4.0"
 
 repositories {
     mavenCentral()
