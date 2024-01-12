@@ -233,6 +233,16 @@ object OkUtils {
         return map
     }
 
+    @JvmStatic
+    fun cookieReplace(cookie: String, name: String, value: String): String {
+        val find = cookieStr(cookie, name)
+        return if (find != null) {
+            cookie.replace(find, "$name=$value; ")
+        } else {
+            cookie
+        }
+    }
+
     // -----------------------------------------------------------------------------------------------------------
 
 

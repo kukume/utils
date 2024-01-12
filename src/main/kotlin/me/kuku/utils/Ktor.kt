@@ -126,6 +126,18 @@ fun HttpResponse.cookie(): String {
     return sb.toString()
 }
 
+fun String.findCookie(name: String): String? {
+    return OkUtils.cookie(this, name)
+}
+
+fun String.findCookieStr(name: String): String {
+    return OkUtils.cookieStr(this, name)
+}
+
+fun String.cookieReplace(name: String, value: String): String {
+    return OkUtils.cookieReplace(this, name, value)
+}
+
 fun HttpMessageBuilder.origin(content: String): Unit = headers.set(HttpHeaders.Origin, content)
 
 fun HttpMessageBuilder.referer(content: String): Unit = headers.set(HttpHeaders.Referrer, content)

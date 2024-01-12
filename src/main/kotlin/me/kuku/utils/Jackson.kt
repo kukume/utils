@@ -73,6 +73,10 @@ object Jackson {
         return objectMapper.convertValue(jsonNode, object: TypeReference<T>() {})
     }
 
+    inline fun <reified T:Any> valueToTree(any: Any): T {
+        return objectMapper.valueToTree(any)
+    }
+
     @JvmStatic
     fun createObjectNode(): ObjectNode {
         return objectMapper.createObjectNode()
@@ -81,6 +85,11 @@ object Jackson {
     @JvmStatic
     fun createArrayNode(): ArrayNode {
         return objectMapper.createArrayNode()
+    }
+
+    @JvmStatic
+    fun valueToTree(any: Any): JsonNode {
+        return objectMapper.valueToTree(any)
     }
 }
 
