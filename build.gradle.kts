@@ -1,7 +1,7 @@
 import java.util.Properties
 
 val jacksonVersion = "2.17.0"
-val ktorVersion = "2.3.9"
+val ktorVersion = "2.3.10"
 
 plugins {
     kotlin("jvm") version "1.9.23"
@@ -10,7 +10,7 @@ plugins {
 }
 
 group = "me.kuku"
-version = "2.3.9.0"
+version = "2.3.10.0"
 
 repositories {
     mavenCentral()

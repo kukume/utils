@@ -9,5 +9,5 @@ https://nexus.kuku.me/repository/maven-public/
 
 依赖
 ```kotlin
-implementation("me.kuku:utils:2.3.9.0")
+implementation("me.kuku:utils:2.3.10.0")
 ```
