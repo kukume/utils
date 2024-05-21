@@ -1,16 +1,16 @@
 import java.util.Properties
 
 val jacksonVersion = "2.17.0"
-val ktorVersion = "2.3.10"
+val ktorVersion = "2.3.11"
 
 plugins {
-    kotlin("jvm") version "1.9.23"
+    kotlin("jvm") version "2.0.0"
     signing
     `maven-publish`
 }
 
 group = "me.kuku"
-version = "2.3.10.0"
+version = "2.3.11.0"
 
 repositories {
     mavenCentral()
