@@ -4,6 +4,7 @@ package me.kuku.utils
 
 import com.fasterxml.jackson.annotation.JsonInclude
 import com.fasterxml.jackson.core.JsonParser
+import com.fasterxml.jackson.core.TreeNode
 import com.fasterxml.jackson.core.type.TypeReference
 import com.fasterxml.jackson.databind.DeserializationFeature
 import com.fasterxml.jackson.databind.JsonNode
@@ -90,6 +91,15 @@ object Jackson {
     fun valueToTree(any: Any): JsonNode {
         return objectMapper.valueToTree(any)
     }
+
+    @JvmStatic
+    fun <T> treeToValue(n: TreeNode, clazz: Class<T>): T {
+        return objectMapper.treeToValue(n, clazz)
+    }
+
+    inline fun <reified T: Any> treeToValue(n: TreeNode): T {
+        return objectMapper.treeToValue(n, object: TypeReference<T>() {})
+    }
 }
 
 fun JsonNode.getString(key: String): String = this[key].asText()
@@ -105,3 +115,5 @@ fun JsonNode.getLong(key: String): Long = this[key].asLong()
 fun JsonNode.getDouble(key: String): Double = this[key].asDouble()
 
 inline fun <reified T: Any> JsonNode.convertValue() = Jackson.convertValue<T>(this)
+
+inline fun <reified T: Any> JsonNode.treeToValue() = Jackson.treeToValue<T>(this)

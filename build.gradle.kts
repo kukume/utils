@@ -1,7 +1,7 @@
 import java.util.Properties
 
 val jacksonVersion = "2.17.0"
-val ktorVersion = "2.3.11"
+val ktorVersion = "2.3.12"
 
 plugins {
     kotlin("jvm") version "2.0.0"
@@ -10,7 +10,7 @@ plugins {
 }
 
 group = "me.kuku"
-version = "2.3.11.0"
+version = "2.3.12.0"
 
 repositories {
     mavenCentral()
@@ -33,7 +33,9 @@ tasks.test {
 }
 
 tasks.compileKotlin {
-    kotlinOptions.jvmTarget = "1.8"
+    compilerOptions {
+        jvmTarget.set(org.jetbrains.kotlin.gradle.dsl.JvmTarget.JVM_1_8)
+    }
 }
 
 val sourcesJar by tasks.registering(Jar::class) {
