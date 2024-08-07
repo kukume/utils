@@ -89,6 +89,28 @@ object JobManager {
         }
     }
 
+    fun every(waitStr: String, block: suspend CoroutineScope.() -> Unit): Job {
+        val chat = waitStr.last()
+        val wait = waitStr.substring(0, waitStr.length - 1).toLong()
+        val finally = wait * when (chat) {
+            's' -> 1000
+            'm' -> 1000 * 60
+            'h' -> 1000 * 60 * 60
+            'd' -> 1000 * 60 * 60 * 24
+            else -> 1000
+        }
+        return coroutineScope.launch {
+            while (true) {
+                delay(finally)
+                kotlin.runCatching {
+                    block()
+                }.onFailure {
+                    it.printStackTrace()
+                }
+            }
+        }
+    }
+
     private fun firstDelay(atTime: String): Long {
         val sss = atTime.split(" ")
         val time = if (sss.size == 1) sss[0] else sss[1]

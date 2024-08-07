@@ -10,7 +10,7 @@ plugins {
 }
 
 group = "me.kuku"
-version = "2.3.12.0"
+version = "2.3.12.1"
 
 repositories {
     mavenCentral()
